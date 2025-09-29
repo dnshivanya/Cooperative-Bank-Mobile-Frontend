@@ -6,13 +6,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'constants/app_colors.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/banking_provider.dart';
 import 'screens/splash_screen.dart';
-import 'screens/login_screen.dart';
+import 'screens/modern_login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/transfer_screen.dart';
 import 'screens/transaction_history_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/bills_screen.dart';
+import 'screens/loans_screen.dart';
+import 'screens/investments_screen.dart';
+import 'screens/credit_cards_screen.dart';
 
 void main() {
   runApp(
@@ -20,6 +25,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => BankingProvider()),
       ],
       child: const CooperativeBankingApp(),
     ),
@@ -50,30 +56,36 @@ class CooperativeBankingApp extends StatelessWidget {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryBlue,
+        seedColor: AppColors.primary,
         brightness: Brightness.light,
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        surface: AppColors.card,
+        error: AppColors.destructive,
       ),
-      scaffoldBackgroundColor: AppColors.lightBackground,
-      cardColor: AppColors.lightCard,
+      scaffoldBackgroundColor: AppColors.background,
+      cardColor: AppColors.card,
       textTheme: GoogleFonts.interTextTheme().apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
+        bodyColor: AppColors.foreground,
+        displayColor: AppColors.foreground,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.primaryBlue,
-        foregroundColor: AppColors.textLight,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.foreground,
         elevation: 0,
         centerTitle: true,
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: GoogleFonts.inter(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: AppColors.textLight,
+          color: AppColors.foreground,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
-          foregroundColor: AppColors.textLight,
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.primaryForeground,
+          elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -81,12 +93,23 @@ class CooperativeBankingApp extends StatelessWidget {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.card,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2),
+          borderSide: const BorderSide(color: AppColors.ring, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.destructive),
         ),
       ),
     );
@@ -97,30 +120,36 @@ class CooperativeBankingApp extends StatelessWidget {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryBlue,
+        seedColor: AppColors.darkPrimary,
         brightness: Brightness.dark,
+        primary: AppColors.darkPrimary,
+        secondary: AppColors.darkSecondary,
+        surface: AppColors.darkCard,
+        error: AppColors.darkDestructive,
       ),
       scaffoldBackgroundColor: AppColors.darkBackground,
       cardColor: AppColors.darkCard,
       textTheme: GoogleFonts.interTextTheme().apply(
-        bodyColor: AppColors.textLight,
-        displayColor: AppColors.textLight,
+        bodyColor: AppColors.darkForeground,
+        displayColor: AppColors.darkForeground,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.darkSurface,
-        foregroundColor: AppColors.textLight,
+        backgroundColor: AppColors.darkBackground,
+        foregroundColor: AppColors.darkForeground,
         elevation: 0,
         centerTitle: true,
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: GoogleFonts.inter(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: AppColors.textLight,
+          color: AppColors.darkForeground,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
-          foregroundColor: AppColors.textLight,
+          backgroundColor: AppColors.darkPrimary,
+          foregroundColor: AppColors.darkPrimaryForeground,
+          elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -128,12 +157,23 @@ class CooperativeBankingApp extends StatelessWidget {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.darkCard,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.darkBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.darkBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2),
+          borderSide: const BorderSide(color: AppColors.darkRing, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.darkDestructive),
         ),
       ),
     );
@@ -148,7 +188,7 @@ class CooperativeBankingApp extends StatelessWidget {
       ),
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
+        builder: (context, state) => const ModernLoginScreen(),
       ),
       GoRoute(
         path: '/register',
@@ -169,6 +209,22 @@ class CooperativeBankingApp extends StatelessWidget {
       GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: '/bills',
+        builder: (context, state) => const BillsScreen(),
+      ),
+      GoRoute(
+        path: '/loans',
+        builder: (context, state) => const LoansScreen(),
+      ),
+      GoRoute(
+        path: '/investments',
+        builder: (context, state) => const InvestmentsScreen(),
+      ),
+      GoRoute(
+        path: '/credit-cards',
+        builder: (context, state) => const CreditCardsScreen(),
       ),
     ],
   );

@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+
 import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart';
 import '../constants/app_colors.dart';
 import '../widgets/ui_components.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ModernLoginScreen extends StatefulWidget {
+  const ModernLoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ModernLoginScreen> createState() => _ModernLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ModernLoginScreenState extends State<ModernLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -43,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(authProvider.error!),
-              backgroundColor: AppColors.error,
+              backgroundColor: AppColors.destructive,
             ),
           );
         }
@@ -54,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -72,13 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: AppColors.primaryBlue,
+                          color: AppColors.primary,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(
-                          Icons.account_balance,
+                          LucideIcons.building2,
                           size: 40,
-                          color: AppColors.textLight,
+                          color: AppColors.primaryForeground,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -86,14 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Welcome Back',
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: AppColors.foreground,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Sign in to your account',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
+                          color: AppColors.mutedForeground,
                         ),
                       ),
                     ],
@@ -107,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   label: 'Email',
                   hintText: 'Enter your email',
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: const Icon(Icons.email_outlined),
+                  prefixIcon: const Icon(LucideIcons.mail),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
@@ -126,10 +130,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   label: 'Password',
                   hintText: 'Enter your password',
                   obscureText: _obscurePassword,
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  prefixIcon: const Icon(LucideIcons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
                     ),
                     onPressed: () {
                       setState(() {
@@ -162,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               _rememberMe = value ?? false;
                             });
                           },
-                          activeColor: AppColors.primaryBlue,
+                          activeColor: AppColors.primary,
                         ),
                         Text(
                           'Remember me',
@@ -176,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: Text(
                         'Forgot Password?',
-                        style: TextStyle(color: AppColors.primaryBlue),
+                        style: TextStyle(color: AppColors.primary),
                       ),
                     ),
                   ],
@@ -197,13 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 
                 // Demo Credentials Info
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.info.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.info.withOpacity(0.3)),
-                  ),
+                AppCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -243,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         'Sign Up',
                         style: TextStyle(
-                          color: AppColors.primaryBlue,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

@@ -60,6 +60,36 @@ dependencies:
   
   # Charts for financial data
   fl_chart: ^0.68.0
+  
+  # Enhanced UI Components
+  flutter_staggered_animations: ^1.1.1
+  shimmer: ^3.0.0
+  lottie: ^3.1.2
+  
+  # Data Tables
+  data_table_2: ^2.5.11
+  
+  # Enhanced Navigation
+  auto_route: ^8.2.0
+  
+  # State Management Enhancement
+  flutter_riverpod: ^2.5.1
+  
+  # Enhanced Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # Enhanced Security
+  encrypt: ^5.0.3
+  
+  # Enhanced HTTP
+  dio: ^5.4.3+1
+  
+  # Enhanced Date/Time
+  timeago: ^3.6.1
+  
+  # Enhanced Icons
+  lucide_icons: ^0.257.0
 
 dev_dependencies:
   flutter_test:

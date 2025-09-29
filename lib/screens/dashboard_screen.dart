@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/banking_provider.dart';
 import '../constants/app_colors.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/account_card.dart';
-import '../widgets/quick_action_card.dart';
-import '../widgets/transaction_item.dart';
+import '../widgets/ui_components.dart';
+import '../widgets/data_table.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -23,28 +24,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryBlue,
+        backgroundColor: AppColors.background,
         elevation: 0,
         title: const Text('Cooperative Banking'),
         actions: [
+          Consumer<BankingProvider>(
+            builder: (context, bankingProvider, child) {
+              final unreadCount = bankingProvider.unreadNotificationsCount;
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(LucideIcons.bell),
+                    onPressed: () {
+                      // TODO: Navigate to notifications
+                    },
+                  ),
+                  if (unreadCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: AppColors.destructive,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          unreadCount.toString(),
+                          style: const TextStyle(
+                            color: AppColors.destructiveForeground,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(
                 icon: Icon(
-                  themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                  themeProvider.isDarkMode ? LucideIcons.sun : LucideIcons.moon,
                 ),
                 onPressed: () {
                   themeProvider.toggleTheme();
                 },
               );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // TODO: Implement notifications
             },
           ),
         ],
@@ -67,59 +102,119 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Welcome Section
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primaryBlue, AppColors.primaryGreen],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                AppCard(
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: AppColors.primaryGradient,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Welcome back,',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textLight.withOpacity(0.9),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome back,',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.primaryForeground.withOpacity(0.9),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        user.displayName,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: AppColors.textLight,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 4),
+                        Text(
+                          user.displayName,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: AppColors.primaryForeground,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Account Balance',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textLight.withOpacity(0.9),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Account Balance',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.primaryForeground.withOpacity(0.9),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        formattedBalance,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: AppColors.textLight,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 4),
+                        Text(
+                          formattedBalance,
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            color: AppColors.primaryForeground,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // Account Information Card
-                AccountCard(
-                  accountNumber: user.accountNumber,
-                  accountType: 'Savings Account',
-                  isVerified: user.isVerified,
+                // Quick Stats
+                Row(
+                  children: [
+                    Expanded(
+                      child: Consumer<BankingProvider>(
+                        builder: (context, bankingProvider, child) {
+                          return StatCard(
+                            title: 'Investments',
+                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalInvestmentValue),
+                            icon: LucideIcons.trendingUp,
+                            iconColor: AppColors.success,
+                            onTap: () => context.go('/investments'),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Consumer<BankingProvider>(
+                        builder: (context, bankingProvider, child) {
+                          return StatCard(
+                            title: 'Loans',
+                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalLoanBalance),
+                            icon: LucideIcons.home,
+                            iconColor: AppColors.warning,
+                            onTap: () => context.go('/loans'),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Consumer<BankingProvider>(
+                        builder: (context, bankingProvider, child) {
+                          return StatCard(
+                            title: 'Credit Cards',
+                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalCreditCardBalance),
+                            icon: LucideIcons.creditCard,
+                            iconColor: AppColors.info,
+                            onTap: () => context.go('/credit-cards'),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Consumer<BankingProvider>(
+                        builder: (context, bankingProvider, child) {
+                          return StatCard(
+                            title: 'Pending Bills',
+                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalBillsAmount),
+                            icon: LucideIcons.fileText,
+                            iconColor: AppColors.destructive,
+                            onTap: () => context.go('/bills'),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24),
 
@@ -128,7 +223,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   'Quick Actions',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: AppColors.foreground,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -140,89 +235,169 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   children: [
-                    QuickActionCard(
-                      icon: Icons.send,
-                      title: 'Transfer',
-                      color: AppColors.primaryBlue,
+                    AppCard(
                       onTap: () => context.go('/transfer'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            LucideIcons.send,
+                            size: 32,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Transfer',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    QuickActionCard(
-                      icon: Icons.history,
-                      title: 'Transactions',
-                      color: AppColors.primaryGreen,
+                    AppCard(
                       onTap: () => context.go('/transactions'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            LucideIcons.history,
+                            size: 32,
+                            color: AppColors.success,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Transactions',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    QuickActionCard(
-                      icon: Icons.payment,
-                      title: 'Pay Bills',
-                      color: AppColors.primaryYellow,
-                      onTap: () {
-                        // TODO: Implement pay bills
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Pay Bills feature coming soon!')),
-                        );
-                      },
+                    AppCard(
+                      onTap: () => context.go('/bills'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            LucideIcons.fileText,
+                            size: 32,
+                            color: AppColors.warning,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Pay Bills',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    QuickActionCard(
-                      icon: Icons.account_balance_wallet,
-                      title: 'Loans',
-                      color: AppColors.info,
-                      onTap: () {
-                        // TODO: Implement loans
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Loans feature coming soon!')),
-                        );
-                      },
+                    AppCard(
+                      onTap: () => context.go('/loans'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            LucideIcons.home,
+                            size: 32,
+                            color: AppColors.info,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Loans',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
 
-                // Recent Transactions
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Recent Transactions',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    TextButton(
+                // Recent Transactions Table
+                TableCard(
+                  title: 'Recent Transactions',
+                  subtitle: 'Your latest banking activity',
+                  actions: [
+                    AppButton(
+                      variant: ButtonVariant.outline,
+                      size: ButtonSize.small,
                       onPressed: () => context.go('/transactions'),
-                      child: Text(
-                        'View All',
-                        style: TextStyle(color: AppColors.primaryBlue),
-                      ),
+                      child: const Text('View All'),
                     ),
                   ],
-                ),
-                const SizedBox(height: 16),
+                  child: Consumer<BankingProvider>(
+                    builder: (context, bankingProvider, child) {
+                      // Mock recent transactions for table
+                      final recentTransactions = [
+                        {
+                          'date': 'Today',
+                          'description': 'Transfer to John Doe',
+                          'amount': '-250.00',
+                          'status': 'Completed',
+                        },
+                        {
+                          'date': 'Yesterday',
+                          'description': 'Salary Deposit',
+                          'amount': '+1,000.00',
+                          'status': 'Completed',
+                        },
+                        {
+                          'date': '2 days ago',
+                          'description': 'ATM Withdrawal',
+                          'amount': '-50.00',
+                          'status': 'Completed',
+                        },
+                      ];
 
-                // Mock Recent Transactions
-                ...List.generate(3, (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: TransactionItem(
-                      type: index == 0 ? 'transfer' : index == 1 ? 'deposit' : 'withdrawal',
-                      amount: index == 0 ? -250.0 : index == 1 ? 1000.0 : -50.0,
-                      description: index == 0 
-                          ? 'Transfer to John Doe' 
-                          : index == 1 
-                              ? 'Salary Deposit' 
-                              : 'ATM Withdrawal',
-                      timestamp: DateTime.now().subtract(Duration(days: index)),
-                      status: 'completed',
-                    ),
-                  );
-                }),
+                      return AppDataTable(
+                        columns: const [
+                          DataColumn(label: Text('Date')),
+                          DataColumn(label: Text('Description')),
+                          DataColumn(label: Text('Amount')),
+                          DataColumn(label: Text('Status')),
+                        ],
+                        rows: recentTransactions.map((transaction) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(transaction['date']!)),
+                              DataCell(Text(transaction['description']!)),
+                              DataCell(
+                                Text(
+                                  transaction['amount']!,
+                                  style: TextStyle(
+                                    color: transaction['amount']!.startsWith('+')
+                                        ? AppColors.success
+                                        : AppColors.destructive,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                AppBadge(
+                                  variant: BadgeVariant.default_,
+                                  child: Text(transaction['status']!),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                        height: 200,
+                      );
+                    },
+                  ),
+                ),
                 const SizedBox(height: 24),
 
                 // Logout Button
                 Center(
-                  child: CustomButton(
-                    text: 'Logout',
+                  child: AppButton(
+                    variant: ButtonVariant.destructive,
                     onPressed: () async {
                       final authProvider = Provider.of<AuthProvider>(context, listen: false);
                       await authProvider.logout();
@@ -230,8 +405,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         context.go('/login');
                       }
                     },
-                    backgroundColor: AppColors.error,
-                    width: 200,
+                    child: const Text('Logout'),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -259,19 +433,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primaryBlue,
-        unselectedItemColor: AppColors.textSecondary,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.mutedForeground,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(LucideIcons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
+            icon: Icon(LucideIcons.history),
             label: 'Transactions',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(LucideIcons.user),
             label: 'Profile',
           ),
         ],
