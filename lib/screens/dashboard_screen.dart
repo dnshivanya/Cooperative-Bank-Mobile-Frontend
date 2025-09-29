@@ -101,56 +101,89 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Welcome Section
-                AppCard(
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: AppColors.primaryGradient,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                    // Welcome Section with Modern Gradient Card
+                    AppCard(
+                      gradient: AppColors.primaryGradient,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Welcome back,',
+                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                          color: AppColors.primaryForeground.withOpacity(0.9),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        user.displayName,
+                                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                          color: AppColors.primaryForeground,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    LucideIcons.user,
+                                    size: 24,
+                                    color: AppColors.primaryForeground,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Account Balance',
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.primaryForeground.withOpacity(0.9),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    formattedBalance,
+                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                      color: AppColors.primaryForeground,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Welcome back,',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.primaryForeground.withOpacity(0.9),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          user.displayName,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: AppColors.primaryForeground,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Account Balance',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.primaryForeground.withOpacity(0.9),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          formattedBalance,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: AppColors.primaryForeground,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
                 // Quick Stats
                 Row(
@@ -218,98 +251,191 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Quick Actions
-                Text(
-                  'Quick Actions',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.foreground,
-                  ),
+                // Quick Actions with Modern Design
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Quick Actions',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.foreground,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        // TODO: Show all actions
+                      },
+                      child: Text(
+                        'View All',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  childAspectRatio: 1.2,
+                  childAspectRatio: 1.1,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   children: [
                     AppCard(
+                      isGlassmorphic: true,
                       onTap: () => context.go('/transfer'),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            LucideIcons.send,
-                            size: 32,
-                            color: AppColors.primary,
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColors.primary.withOpacity(0.1), AppColors.primary.withOpacity(0.05)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              LucideIcons.send,
+                              size: 28,
+                              color: AppColors.primary,
+                            ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           Text(
                             'Transfer',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Send money',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.mutedForeground,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     AppCard(
+                      isGlassmorphic: true,
                       onTap: () => context.go('/transactions'),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            LucideIcons.history,
-                            size: 32,
-                            color: AppColors.success,
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColors.success.withOpacity(0.1), AppColors.success.withOpacity(0.05)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              LucideIcons.history,
+                              size: 28,
+                              color: AppColors.success,
+                            ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           Text(
                             'Transactions',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    AppCard(
-                      onTap: () => context.go('/bills'),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            LucideIcons.fileText,
-                            size: 32,
-                            color: AppColors.warning,
-                          ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           Text(
-                            'Pay Bills',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                            'View history',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.mutedForeground,
                             ),
                           ),
                         ],
                       ),
                     ),
                     AppCard(
+                      isGlassmorphic: true,
+                      onTap: () => context.go('/bills'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColors.warning.withOpacity(0.1), AppColors.warning.withOpacity(0.05)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              LucideIcons.fileText,
+                              size: 28,
+                              color: AppColors.warning,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Pay Bills',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Manage bills',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.mutedForeground,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    AppCard(
+                      isGlassmorphic: true,
                       onTap: () => context.go('/loans'),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            LucideIcons.home,
-                            size: 32,
-                            color: AppColors.info,
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColors.info.withOpacity(0.1), AppColors.info.withOpacity(0.05)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              LucideIcons.home,
+                              size: 28,
+                              color: AppColors.info,
+                            ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           Text(
                             'Loans',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Apply now',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.mutedForeground,
                             ),
                           ),
                         ],
@@ -414,41 +540,111 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          switch (index) {
-            case 0:
-              // Already on dashboard
-              break;
-            case 1:
-              context.go('/transactions');
-              break;
-            case 2:
-              context.go('/profile');
-              break;
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.mutedForeground,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Container(
+            height: 70,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(
+                  context,
+                  index: 0,
+                  icon: LucideIcons.home,
+                  label: 'Home',
+                  isSelected: _selectedIndex == 0,
+                ),
+                _buildNavItem(
+                  context,
+                  index: 1,
+                  icon: LucideIcons.history,
+                  label: 'Transactions',
+                  isSelected: _selectedIndex == 1,
+                ),
+                _buildNavItem(
+                  context,
+                  index: 2,
+                  icon: LucideIcons.user,
+                  label: 'Profile',
+                  isSelected: _selectedIndex == 2,
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.history),
-            label: 'Transactions',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.user),
-            label: 'Profile',
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+    BuildContext context, {
+    required int index,
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedIndex = index;
+        });
+        switch (index) {
+          case 0:
+            // Already on dashboard
+            break;
+          case 1:
+            context.go('/transactions');
+            break;
+          case 2:
+            context.go('/profile');
+            break;
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary : Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Icon(
+                icon,
+                size: 16,
+                color: isSelected ? AppColors.primaryForeground : AppColors.mutedForeground,
+              ),
+            ),
+            const SizedBox(height: 1),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: isSelected ? AppColors.primary : AppColors.mutedForeground,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontSize: 9,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

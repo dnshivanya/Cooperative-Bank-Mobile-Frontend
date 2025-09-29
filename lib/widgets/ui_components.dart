@@ -10,6 +10,8 @@ class AppCard extends StatelessWidget {
   final BorderRadius? borderRadius;
   final BoxShadow? shadow;
   final VoidCallback? onTap;
+  final bool isGlassmorphic;
+  final List<Color>? gradient;
 
   const AppCard({
     super.key,
@@ -20,6 +22,8 @@ class AppCard extends StatelessWidget {
     this.borderRadius,
     this.shadow,
     this.onTap,
+    this.isGlassmorphic = false,
+    this.gradient,
   });
 
   @override
@@ -29,21 +33,55 @@ class AppCard extends StatelessWidget {
     return Container(
       margin: margin,
       child: Material(
-        color: backgroundColor ?? (isDark ? AppColors.darkCard : AppColors.card),
-        borderRadius: borderRadius ?? BorderRadius.circular(12),
+        color: Colors.transparent,
         elevation: 0,
-        shadowColor: Colors.black.withOpacity(0.1),
         child: InkWell(
           onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(12),
+          borderRadius: borderRadius ?? BorderRadius.circular(16),
           child: Container(
-            padding: padding ?? const EdgeInsets.all(16),
+            padding: padding ?? const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              borderRadius: borderRadius ?? BorderRadius.circular(12),
+              borderRadius: borderRadius ?? BorderRadius.circular(16),
+              gradient: gradient != null 
+                  ? LinearGradient(
+                      colors: gradient!,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : null,
+              color: gradient == null 
+                  ? (isGlassmorphic 
+                      ? (isDark ? AppColors.darkGlassBackground : AppColors.glassBackground)
+                      : (backgroundColor ?? (isDark ? AppColors.darkCard : AppColors.card)))
+                  : null,
               border: Border.all(
-                color: isDark ? AppColors.darkBorder : AppColors.border,
-                width: 1,
+                color: isGlassmorphic 
+                    ? (isDark ? AppColors.darkGlassBorder : AppColors.glassBorder)
+                    : (isDark ? AppColors.darkBorder : AppColors.border),
+                width: isGlassmorphic ? 0.5 : 1,
               ),
+              boxShadow: [
+                if (isGlassmorphic)
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                    spreadRadius: 0,
+                  )
+                else
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                BoxShadow(
+                  color: Colors.white.withOpacity(isDark ? 0.0 : 0.8),
+                  blurRadius: 1,
+                  offset: const Offset(0, 1),
+                  spreadRadius: 0,
+                ),
+              ],
             ),
             child: child,
           ),
@@ -118,10 +156,22 @@ class AppButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(_getBorderRadius(size)),
         side: variant == ButtonVariant.outline
-            ? BorderSide(color: isDark ? AppColors.darkBorder : AppColors.border)
+            ? BorderSide(color: isDark ? AppColors.darkBorder : AppColors.border, width: 1.5)
             : BorderSide.none,
       ),
       padding: _getPadding(size),
+    ).copyWith(
+      overlayColor: MaterialStateProperty.resolveWith<Color?>(
+        (Set<MaterialState> states) {
+          if (states.contains(MaterialState.pressed)) {
+            return Colors.white.withOpacity(0.1);
+          }
+          if (states.contains(MaterialState.hovered)) {
+            return Colors.white.withOpacity(0.05);
+          }
+          return null;
+        },
+      ),
     );
   }
 
@@ -180,11 +230,11 @@ class AppButton extends StatelessWidget {
   double _getBorderRadius(ButtonSize size) {
     switch (size) {
       case ButtonSize.small:
-        return 6;
-      case ButtonSize.medium:
         return 8;
+      case ButtonSize.medium:
+        return 12;
       case ButtonSize.large:
-        return 10;
+        return 16;
     }
   }
 
@@ -312,11 +362,11 @@ class AppInput extends StatelessWidget {
   double _getBorderRadius(InputSize size) {
     switch (size) {
       case InputSize.small:
-        return 6;
-      case InputSize.medium:
         return 8;
+      case InputSize.medium:
+        return 12;
       case InputSize.large:
-        return 10;
+        return 16;
     }
   }
 
@@ -426,6 +476,133 @@ class AppBadge extends StatelessWidget {
 
 enum BadgeVariant { default_, secondary, destructive, outline }
 enum BadgeSize { small, medium, large }
+
+class StatCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color iconColor;
+  final VoidCallback? onTap;
+
+  const StatCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.iconColor,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: iconColor,
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TableCard extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final List<Widget>? actions;
+  final Widget child;
+
+  const TableCard({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.actions,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              if (actions != null) ...[
+                const SizedBox(width: 16),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: actions!,
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
+}
 
 class AnimatedList extends StatelessWidget {
   final List<Widget> children;

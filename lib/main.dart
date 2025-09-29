@@ -68,6 +68,79 @@ class CooperativeBankingApp extends StatelessWidget {
       textTheme: GoogleFonts.interTextTheme().apply(
         bodyColor: AppColors.foreground,
         displayColor: AppColors.foreground,
+      ).copyWith(
+        headlineLarge: GoogleFonts.inter(
+          fontSize: 32,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.5,
+          color: AppColors.foreground,
+        ),
+        headlineMedium: GoogleFonts.inter(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.25,
+          color: AppColors.foreground,
+        ),
+        headlineSmall: GoogleFonts.inter(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+          color: AppColors.foreground,
+        ),
+        titleLarge: GoogleFonts.inter(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+          color: AppColors.foreground,
+        ),
+        titleMedium: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.15,
+          color: AppColors.foreground,
+        ),
+        titleSmall: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+          color: AppColors.foreground,
+        ),
+        bodyLarge: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.15,
+          color: AppColors.foreground,
+        ),
+        bodyMedium: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.25,
+          color: AppColors.foreground,
+        ),
+        bodySmall: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.4,
+          color: AppColors.mutedForeground,
+        ),
+        labelLarge: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+          color: AppColors.foreground,
+        ),
+        labelMedium: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+          color: AppColors.foreground,
+        ),
+        labelSmall: GoogleFonts.inter(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+          color: AppColors.mutedForeground,
+        ),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
@@ -132,6 +205,79 @@ class CooperativeBankingApp extends StatelessWidget {
       textTheme: GoogleFonts.interTextTheme().apply(
         bodyColor: AppColors.darkForeground,
         displayColor: AppColors.darkForeground,
+      ).copyWith(
+        headlineLarge: GoogleFonts.inter(
+          fontSize: 32,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.5,
+          color: AppColors.darkForeground,
+        ),
+        headlineMedium: GoogleFonts.inter(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.25,
+          color: AppColors.darkForeground,
+        ),
+        headlineSmall: GoogleFonts.inter(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+          color: AppColors.darkForeground,
+        ),
+        titleLarge: GoogleFonts.inter(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+          color: AppColors.darkForeground,
+        ),
+        titleMedium: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.15,
+          color: AppColors.darkForeground,
+        ),
+        titleSmall: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+          color: AppColors.darkForeground,
+        ),
+        bodyLarge: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.15,
+          color: AppColors.darkForeground,
+        ),
+        bodyMedium: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.25,
+          color: AppColors.darkForeground,
+        ),
+        bodySmall: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.4,
+          color: AppColors.darkMutedForeground,
+        ),
+        labelLarge: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+          color: AppColors.darkForeground,
+        ),
+        labelMedium: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+          color: AppColors.darkForeground,
+        ),
+        labelSmall: GoogleFonts.inter(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+          color: AppColors.darkMutedForeground,
+        ),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.darkBackground,

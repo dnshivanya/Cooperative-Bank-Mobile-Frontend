@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Brand colors as per user preference
-  static const Color primaryBlue = Color(0xFF0F172A);
-  static const Color primaryGreen = Color(0xFF059669);
+  // Modern brand colors with enhanced gradients
+  static const Color primaryBlue = Color(0xFF1E40AF);
+  static const Color primaryGreen = Color(0xFF10B981);
   static const Color primaryYellow = Color(0xFFF59E0B);
   
-  // Neutral colors (shadcn style)
-  static const Color background = Color(0xFFFFFFFF);
+  // Enhanced neutral colors with better contrast
+  static const Color background = Color(0xFFFAFAFA);
   static const Color foreground = Color(0xFF0F172A);
   static const Color card = Color(0xFFFFFFFF);
   static const Color cardForeground = Color(0xFF0F172A);
   static const Color popover = Color(0xFFFFFFFF);
   static const Color popoverForeground = Color(0xFF0F172A);
-  static const Color primary = Color(0xFF0F172A);
-  static const Color primaryForeground = Color(0xFFF8FAFC);
+  static const Color primary = Color(0xFF1E40AF);
+  static const Color primaryForeground = Color(0xFFFFFFFF);
   static const Color secondary = Color(0xFFF1F5F9);
   static const Color secondaryForeground = Color(0xFF0F172A);
-  static const Color muted = Color(0xFFF1F5F9);
+  static const Color muted = Color(0xFFF8FAFC);
   static const Color mutedForeground = Color(0xFF64748B);
-  static const Color accent = Color(0xFFF1F5F9);
-  static const Color accentForeground = Color(0xFF0F172A);
+  static const Color accent = Color(0xFFE0E7FF);
+  static const Color accentForeground = Color(0xFF1E40AF);
   static const Color destructive = Color(0xFFEF4444);
-  static const Color destructiveForeground = Color(0xFFF8FAFC);
+  static const Color destructiveForeground = Color(0xFFFFFFFF);
   static const Color border = Color(0xFFE2E8F0);
-  static const Color input = Color(0xFFE2E8F0);
-  static const Color ring = Color(0xFF0F172A);
+  static const Color input = Color(0xFFF1F5F9);
+  static const Color ring = Color(0xFF1E40AF);
   
   // Dark theme colors
   static const Color darkBackground = Color(0xFF0F172A);
@@ -71,9 +71,17 @@ class AppColors {
   static const Color lightCard = card;
   static const Color lightSurface = card;
   
-  // Gradient colors
-  static const List<Color> primaryGradient = [primaryBlue, primaryGreen];
-  static const List<Color> successGradient = [Color(0xFF059669), Color(0xFF10B981)];
+  // Modern gradient colors with enhanced visual appeal
+  static const List<Color> primaryGradient = [Color(0xFF1E40AF), Color(0xFF3B82F6), Color(0xFF10B981)];
+  static const List<Color> successGradient = [Color(0xFF10B981), Color(0xFF34D399)];
   static const List<Color> warningGradient = [Color(0xFFF59E0B), Color(0xFFFBBF24)];
   static const List<Color> errorGradient = [Color(0xFFEF4444), Color(0xFFF87171)];
+  static const List<Color> cardGradient = [Color(0xFFFFFFFF), Color(0xFFF8FAFC)];
+  static const List<Color> glassGradient = [Color(0x40FFFFFF), Color(0x20FFFFFF)];
+  
+  // Glassmorphism colors
+  static const Color glassBackground = Color(0x20FFFFFF);
+  static const Color glassBorder = Color(0x30FFFFFF);
+  static const Color darkGlassBackground = Color(0x201E293B);
+  static const Color darkGlassBorder = Color(0x30334155);
 }
