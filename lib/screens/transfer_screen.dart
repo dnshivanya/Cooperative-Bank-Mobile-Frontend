@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../constants/app_colors.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/ui_components.dart';
 
 class TransferScreen extends StatefulWidget {
   const TransferScreen({super.key});
@@ -17,6 +19,30 @@ class _TransferScreenState extends State<TransferScreen> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   bool _isLoading = false;
+  String? _selectedRecipient;
+  
+  final List<SavedRecipient> _savedRecipients = [
+    SavedRecipient(
+      id: '1',
+      name: 'John Doe',
+      accountNumber: '1234567890',
+      bankName: 'Cooperative Bank',
+    ),
+    SavedRecipient(
+      id: '2',
+      name: 'Jane Smith',
+      accountNumber: '0987654321',
+      bankName: 'Cooperative Bank',
+    ),
+    SavedRecipient(
+      id: '3',
+      name: 'Mike Johnson',
+      accountNumber: '5555666677',
+      bankName: 'Other Bank',
+    ),
+  ];
+  
+  final List<double> _quickAmounts = [50, 100, 250, 500, 1000];
 
   @override
   void dispose() {
@@ -54,10 +80,7 @@ class _TransferScreenState extends State<TransferScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryBlue,
-        elevation: 0,
         title: const Text('Transfer Money'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -78,17 +101,101 @@ class _TransferScreenState extends State<TransferScreen> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withOpacity(0.1),
+                      color: AppColors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.send,
                       size: 40,
-                      color: AppColors.primaryBlue,
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
                 const SizedBox(height: 30),
+
+                // Saved Recipients
+                if (_savedRecipients.isNotEmpty) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Saved Recipients',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Show all recipients
+                        },
+                        child: const Text('View All'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 80,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _savedRecipients.length,
+                      itemBuilder: (context, index) {
+                        final recipient = _savedRecipients[index];
+                        final isSelected = _selectedRecipient == recipient.id;
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedRecipient = recipient.id;
+                              _recipientController.text = recipient.accountNumber;
+                            });
+                          },
+                          child: Container(
+                            width: 120,
+                            margin: EdgeInsets.only(
+                              right: index < _savedRecipients.length - 1 ? 12 : 0,
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.primary.withOpacity(0.1)
+                                  : AppColors.card,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.border,
+                                width: isSelected ? 2 : 1,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  LucideIcons.user,
+                                  size: 24,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.mutedForeground,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  recipient.name,
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    fontWeight: isSelected
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
 
                 // Recipient Account
                 CustomTextField(
@@ -97,6 +204,14 @@ class _TransferScreenState extends State<TransferScreen> {
                   hintText: 'Enter account number',
                   keyboardType: TextInputType.number,
                   prefixIcon: Icons.account_balance_wallet,
+                  suffixIcon: IconButton(
+                    icon: Icon(LucideIcons.qrCode),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('QR Scanner coming soon!')),
+                      );
+                    },
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter recipient account number';
@@ -109,12 +224,12 @@ class _TransferScreenState extends State<TransferScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Amount
+                // Amount with Quick Buttons
                 CustomTextField(
                   controller: _amountController,
                   label: 'Amount',
                   hintText: 'Enter amount',
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   prefixIcon: Icons.attach_money,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -129,6 +244,23 @@ class _TransferScreenState extends State<TransferScreen> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _quickAmounts.map((amount) {
+                    return ActionChip(
+                      label: Text('\$${amount.toStringAsFixed(0)}'),
+                      onPressed: () {
+                        setState(() {
+                          _amountController.text = amount.toStringAsFixed(2);
+                        });
+                      },
+                      backgroundColor: AppColors.card,
+                      side: BorderSide(color: AppColors.border),
+                    );
+                  }).toList(),
                 ),
                 const SizedBox(height: 20),
 
@@ -193,4 +325,18 @@ class _TransferScreenState extends State<TransferScreen> {
       ),
     );
   }
+}
+
+class SavedRecipient {
+  final String id;
+  final String name;
+  final String accountNumber;
+  final String bankName;
+
+  SavedRecipient({
+    required this.id,
+    required this.name,
+    required this.accountNumber,
+    required this.bankName,
+  });
 }

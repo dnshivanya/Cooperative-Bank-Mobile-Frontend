@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/banking_models.dart';
+import '../models/transaction.dart';
 
 class BankingProvider extends ChangeNotifier {
   List<Loan> _loans = [];
@@ -7,6 +8,7 @@ class BankingProvider extends ChangeNotifier {
   List<CreditCard> _creditCards = [];
   List<Bill> _bills = [];
   List<NotificationItem> _notifications = [];
+  List<Transaction> _transactions = [];
   bool _isLoading = false;
   String? _error;
 
@@ -16,6 +18,8 @@ class BankingProvider extends ChangeNotifier {
   List<CreditCard> get creditCards => _creditCards;
   List<Bill> get bills => _bills;
   List<NotificationItem> get notifications => _notifications;
+  List<Transaction> get transactions => _transactions;
+  List<Transaction> get recentTransactions => _transactions.take(5).toList();
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -28,6 +32,7 @@ class BankingProvider extends ChangeNotifier {
 
   BankingProvider() {
     _loadMockData();
+    _loadMockTransactions();
   }
 
   void _loadMockData() {
@@ -169,6 +174,173 @@ class BankingProvider extends ChangeNotifier {
     ];
 
     notifyListeners();
+  }
+
+  void _loadMockTransactions() {
+    _transactions = [
+      Transaction(
+        id: '1',
+        type: 'transfer',
+        status: 'completed',
+        amount: -250.0,
+        fromAccount: '1234567890',
+        toAccount: '0987654321',
+        description: 'Transfer to John Doe',
+        timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+        fee: 2.50,
+        reference: 'TXN${DateTime.now().millisecondsSinceEpoch}',
+      ),
+      Transaction(
+        id: '2',
+        type: 'deposit',
+        status: 'completed',
+        amount: 1000.0,
+        toAccount: '1234567890',
+        description: 'Salary Deposit',
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
+        reference: 'SAL${DateTime.now().millisecondsSinceEpoch}',
+      ),
+      Transaction(
+        id: '3',
+        type: 'withdrawal',
+        status: 'completed',
+        amount: -50.0,
+        fromAccount: '1234567890',
+        description: 'ATM Withdrawal',
+        timestamp: DateTime.now().subtract(const Duration(days: 2)),
+        fee: 1.00,
+        reference: 'ATM${DateTime.now().millisecondsSinceEpoch}',
+      ),
+      Transaction(
+        id: '4',
+        type: 'payment',
+        status: 'completed',
+        amount: -75.0,
+        fromAccount: '1234567890',
+        description: 'Electricity Bill Payment',
+        timestamp: DateTime.now().subtract(const Duration(days: 3)),
+        reference: 'BILL${DateTime.now().millisecondsSinceEpoch}',
+      ),
+      Transaction(
+        id: '5',
+        type: 'transfer',
+        status: 'completed',
+        amount: -100.0,
+        fromAccount: '1234567890',
+        toAccount: '5555666677',
+        description: 'Transfer to Jane Smith',
+        timestamp: DateTime.now().subtract(const Duration(days: 5)),
+        fee: 2.50,
+        reference: 'TXN${DateTime.now().millisecondsSinceEpoch}',
+      ),
+    ];
+    notifyListeners();
+  }
+
+  Future<void> addDeposit({
+    required double amount,
+    required String description,
+    required String accountNumber,
+  }) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      
+      final transaction = Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        type: 'deposit',
+        status: 'completed',
+        amount: amount,
+        toAccount: accountNumber,
+        description: description,
+        timestamp: DateTime.now(),
+        reference: 'DEP${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      _transactions.insert(0, transaction);
+      
+      _notifications.insert(0, NotificationItem(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: 'Deposit Successful',
+        message: 'You deposited \$${amount.toStringAsFixed(2)} successfully',
+        type: 'success',
+        timestamp: DateTime.now(),
+        isRead: false,
+      ));
+    } catch (e) {
+      _setError('Failed to process deposit. Please try again.');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> addWithdrawal({
+    required double amount,
+    required String description,
+    required String accountNumber,
+  }) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      
+      final transaction = Transaction(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        type: 'withdrawal',
+        status: 'completed',
+        amount: -amount,
+        fromAccount: accountNumber,
+        description: description,
+        timestamp: DateTime.now(),
+        fee: 1.00,
+        reference: 'WD${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      _transactions.insert(0, transaction);
+      
+      _notifications.insert(0, NotificationItem(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: 'Withdrawal Successful',
+        message: 'You withdrew \$${amount.toStringAsFixed(2)} successfully',
+        type: 'success',
+        timestamp: DateTime.now(),
+        isRead: false,
+      ));
+    } catch (e) {
+      _setError('Failed to process withdrawal. Please try again.');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> createMoneyRequest({
+    required double amount,
+    required String description,
+    required String recipientAccount,
+    String? recipientName,
+  }) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      
+      _notifications.insert(0, NotificationItem(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: 'Money Request Sent',
+        message: 'You requested \$${amount.toStringAsFixed(2)} from ${recipientName ?? recipientAccount}',
+        type: 'info',
+        timestamp: DateTime.now(),
+        isRead: false,
+      ));
+    } catch (e) {
+      _setError('Failed to send money request. Please try again.');
+    } finally {
+      _setLoading(false);
+    }
   }
 
   Future<void> payBill(String billId) async {

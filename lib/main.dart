@@ -18,6 +18,9 @@ import 'screens/bills_screen.dart';
 import 'screens/loans_screen.dart';
 import 'screens/investments_screen.dart';
 import 'screens/credit_cards_screen.dart';
+import 'screens/notifications_screen.dart';
+import 'screens/savings_goals_screen.dart';
+import 'screens/budget_screen.dart';
 
 void main() {
   runApp(
@@ -371,6 +374,18 @@ class CooperativeBankingApp extends StatelessWidget {
       GoRoute(
         path: '/credit-cards',
         builder: (context, state) => const CreditCardsScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/savings-goals',
+        builder: (context, state) => const SavingsGoalsScreen(),
+      ),
+      GoRoute(
+        path: '/budget',
+        builder: (context, state) => const BudgetScreen(),
       ),
     ],
   );

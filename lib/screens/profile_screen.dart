@@ -17,10 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryBlue,
-        elevation: 0,
         title: const Text('Profile'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -44,22 +41,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primaryBlue, AppColors.primaryGreen],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: AppColors.lightCard,
                     borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundColor: AppColors.textLight.withOpacity(0.2),
+                        backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
                         child: Text(
                           user.displayName.split(' ').map((e) => e[0]).join(),
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: AppColors.textLight,
+                            color: AppColors.primaryBlue,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -68,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(
                         user.fullName,
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: AppColors.textLight,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -76,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(
                         user.email,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textLight.withOpacity(0.9),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -84,8 +84,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: user.isVerified 
-                              ? AppColors.success.withOpacity(0.2)
-                              : AppColors.warning.withOpacity(0.2),
+                              ? AppColors.success.withOpacity(0.1)
+                              : AppColors.warning.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -94,13 +94,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Icon(
                               user.isVerified ? Icons.verified : Icons.pending,
                               size: 16,
-                              color: AppColors.textLight,
+                              color: user.isVerified ? AppColors.success : AppColors.warning,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               user.isVerified ? 'Verified Account' : 'Pending Verification',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.textLight,
+                                color: user.isVerified ? AppColors.success : AppColors.warning,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -124,10 +124,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Settings
-                _buildInfoCard(
+                // Account Management
+                _buildSectionCard(
                   context,
-                  'Settings',
+                  'Account Management',
+                  [
+                    _buildMenuRow(
+                      context,
+                      icon: Icons.security,
+                      title: 'Security',
+                      subtitle: 'Password, PIN, 2FA',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Security settings coming soon!')),
+                        );
+                      },
+                    ),
+                    _buildMenuRow(
+                      context,
+                      icon: Icons.credit_card,
+                      title: 'Payment Methods',
+                      subtitle: 'Cards, accounts',
+                      onTap: () {
+                        context.go('/credit-cards');
+                      },
+                    ),
+                    _buildMenuRow(
+                      context,
+                      icon: Icons.receipt_long,
+                      title: 'Statements',
+                      subtitle: 'Download statements',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Statements feature coming soon!')),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Preferences
+                _buildSectionCard(
+                  context,
+                  'Preferences',
                   [
                     _buildSettingRow(
                       context,
@@ -148,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context,
                       'Biometric Authentication',
                       Switch(
-                        value: false, // Mock value
+                        value: false,
                         onChanged: (value) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Biometric authentication coming soon!')),
@@ -161,14 +201,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context,
                       'Notifications',
                       Switch(
-                        value: true, // Mock value
+                        value: true,
                         onChanged: (value) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Notification settings coming soon!')),
-                          );
+                          context.go('/notifications');
                         },
                         activeColor: AppColors.primaryBlue,
                       ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Support & Help
+                _buildSectionCard(
+                  context,
+                  'Support & Help',
+                  [
+                    _buildMenuRow(
+                      context,
+                      icon: Icons.help_outline,
+                      title: 'Help Center',
+                      subtitle: 'FAQs and guides',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Help center coming soon!')),
+                        );
+                      },
+                    ),
+                    _buildMenuRow(
+                      context,
+                      icon: Icons.chat_bubble_outline,
+                      title: 'Contact Support',
+                      subtitle: '24/7 customer service',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Contact support coming soon!')),
+                        );
+                      },
+                    ),
+                    _buildMenuRow(
+                      context,
+                      icon: Icons.info_outline,
+                      title: 'About',
+                      subtitle: 'App version 1.0.0',
+                      onTap: () {
+                        _showAboutDialog(context);
+                      },
                     ),
                   ],
                 ),
@@ -221,6 +299,108 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 16),
           ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard(BuildContext context, String title, List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.lightCard,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuRow(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primaryBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, size: 20, color: AppColors.primaryBlue),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: AppColors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('About Cooperative Banking'),
+        content: const Text(
+          'Cooperative Banking App\n\nVersion 1.0.0\n\nA modern banking solution for managing your finances efficiently.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../constants/app_colors.dart';
 import '../widgets/transaction_item.dart';
+import '../widgets/ui_components.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -12,6 +14,8 @@ class TransactionHistoryScreen extends StatefulWidget {
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   String _selectedFilter = 'All';
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   final List<String> _filterOptions = ['All', 'Transfer', 'Deposit', 'Withdrawal', 'Payment'];
 
@@ -75,13 +79,33 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     },
   ];
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   List<Map<String, dynamic>> get _filteredTransactions {
-    if (_selectedFilter == 'All') {
-      return _transactions;
+    var filtered = _transactions;
+
+    // Apply type filter
+    if (_selectedFilter != 'All') {
+      filtered = filtered.where((transaction) {
+        return transaction['type'] == _selectedFilter.toLowerCase();
+      }).toList();
     }
-    return _transactions.where((transaction) {
-      return transaction['type'] == _selectedFilter.toLowerCase();
-    }).toList();
+
+    // Apply search filter
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered.where((transaction) {
+        final description = transaction['description'].toString().toLowerCase();
+        final amount = transaction['amount'].toString();
+        return description.contains(_searchQuery.toLowerCase()) ||
+            amount.contains(_searchQuery);
+      }).toList();
+    }
+
+    return filtered;
   }
 
   @override
@@ -89,8 +113,6 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryBlue,
-        elevation: 0,
         title: const Text('Transaction History'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -99,10 +121,44 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
       ),
       body: Column(
         children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: AppInput(
+              controller: _searchController,
+              hintText: 'Search transactions...',
+              prefixIcon: Icon(
+                LucideIcons.search,
+                size: 20,
+                color: AppColors.mutedForeground,
+              ),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(
+                        LucideIcons.x,
+                        size: 20,
+                        color: AppColors.mutedForeground,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _searchQuery = '';
+                          _searchController.clear();
+                        });
+                      },
+                    )
+                  : null,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
+          ),
+
           // Filter Section
           Container(
-            padding: const EdgeInsets.all(16),
-            color: AppColors.lightCard,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -110,18 +166,25 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                   final isSelected = _selectedFilter == filter;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
+                    child: ActionChip(
                       label: Text(filter),
-                      selected: isSelected,
-                      onSelected: (selected) {
+                      onPressed: () {
                         setState(() {
                           _selectedFilter = filter;
                         });
                       },
-                      selectedColor: AppColors.primaryBlue.withOpacity(0.2),
-                      checkmarkColor: AppColors.primaryBlue,
+                      backgroundColor: isSelected
+                          ? AppColors.primary
+                          : AppColors.card,
+                      side: BorderSide(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
+                      ),
                       labelStyle: TextStyle(
-                        color: isSelected ? AppColors.primaryBlue : AppColors.textSecondary,
+                        color: isSelected
+                            ? AppColors.primaryForeground
+                            : AppColors.foreground,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
@@ -131,6 +194,39 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             ),
           ),
 
+          // Summary Info
+          if (_filteredTransactions.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              margin: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${_filteredTransactions.length} transaction${_filteredTransactions.length != 1 ? 's' : ''}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.mutedForeground,
+                    ),
+                  ),
+                  if (_searchQuery.isNotEmpty || _selectedFilter != 'All')
+                    TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _selectedFilter = 'All';
+                          _searchQuery = '';
+                          _searchController.clear();
+                        });
+                      },
+                      icon: const Icon(LucideIcons.x, size: 16),
+                      label: const Text('Clear filters'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
           // Transactions List
           Expanded(
             child: _filteredTransactions.isEmpty
@@ -139,22 +235,24 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.receipt_long,
+                          LucideIcons.search,
                           size: 64,
-                          color: AppColors.textSecondary.withOpacity(0.5),
+                          color: AppColors.mutedForeground.withOpacity(0.5),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           'No transactions found',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppColors.textSecondary,
+                            color: AppColors.mutedForeground,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Your transactions will appear here',
+                          _searchQuery.isNotEmpty
+                              ? 'Try a different search term'
+                              : 'Your transactions will appear here',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
+                            color: AppColors.mutedForeground,
                           ),
                         ),
                       ],
