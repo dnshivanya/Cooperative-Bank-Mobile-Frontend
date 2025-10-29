@@ -240,7 +240,7 @@ class _TransferScreenState extends State<TransferScreen> {
                       return 'Please enter a valid amount';
                     }
                     if (amount > 100000) {
-                      return 'Amount cannot exceed \$100,000';
+                      return 'Amount cannot exceed Rs100,000';
                     }
                     return null;
                   },
@@ -251,7 +251,7 @@ class _TransferScreenState extends State<TransferScreen> {
                   runSpacing: 8,
                   children: _quickAmounts.map((amount) {
                     return ActionChip(
-                      label: Text('\$${amount.toStringAsFixed(0)}'),
+                      label: Text('Rs${amount.toStringAsFixed(0)}'),
                       onPressed: () {
                         setState(() {
                           _amountController.text = amount.toStringAsFixed(2);
@@ -308,11 +308,11 @@ class _TransferScreenState extends State<TransferScreen> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       Text(
-                        '• Transfer fee: \$2.50 per transaction',
+                        '• Transfer fee: Rs2.50 per transaction',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       Text(
-                        '• Daily limit: \$10,000',
+                        '• Daily limit: Rs10,000',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],

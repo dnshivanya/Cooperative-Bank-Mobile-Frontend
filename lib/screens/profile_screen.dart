@@ -175,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Consumer<ThemeProvider>(
                         builder: (context, themeProvider, child) {
                           return Switch(
-                            value: themeProvider.isDarkMode,
+                            value: themeProvider.isDarkMode(context),
                             onChanged: (value) {
                               themeProvider.toggleTheme();
                             },

@@ -53,11 +53,12 @@ class TransactionItem extends StatelessWidget {
   }
 
   String get _getFormattedAmount {
+    final prefix = amount > 0 ? '+' : '';
     final formattedAmount = NumberFormat.currency(
-      symbol: amount > 0 ? '+' : '',
+      symbol: 'Rs',
       decimalDigits: 2,
     ).format(amount.abs());
-    return formattedAmount;
+    return '$prefix$formattedAmount';
   }
 
   String get _getFormattedTime {

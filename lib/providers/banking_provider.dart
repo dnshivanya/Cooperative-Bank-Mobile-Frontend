@@ -150,7 +150,7 @@ class BankingProvider extends ChangeNotifier {
       NotificationItem(
         id: '1',
         title: 'Payment Received',
-        message: 'You received \$1,000.00 from Jane Smith',
+        message: 'You received Rs1,000.00 from Jane Smith',
         type: 'success',
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
         isRead: false,
@@ -158,7 +158,7 @@ class BankingProvider extends ChangeNotifier {
       NotificationItem(
         id: '2',
         title: 'Bill Due Soon',
-        message: 'Your electricity bill of \$125.50 is due in 5 days',
+        message: 'Your electricity bill of Rs125.50 is due in 5 days',
         type: 'warning',
         timestamp: DateTime.now().subtract(const Duration(hours: 6)),
         isRead: false,
@@ -264,7 +264,7 @@ class BankingProvider extends ChangeNotifier {
       _notifications.insert(0, NotificationItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: 'Deposit Successful',
-        message: 'You deposited \$${amount.toStringAsFixed(2)} successfully',
+        message: 'You deposited Rs${amount.toStringAsFixed(2)} successfully',
         type: 'success',
         timestamp: DateTime.now(),
         isRead: false,
@@ -304,7 +304,7 @@ class BankingProvider extends ChangeNotifier {
       _notifications.insert(0, NotificationItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: 'Withdrawal Successful',
-        message: 'You withdrew \$${amount.toStringAsFixed(2)} successfully',
+        message: 'You withdrew Rs${amount.toStringAsFixed(2)} successfully',
         type: 'success',
         timestamp: DateTime.now(),
         isRead: false,
@@ -331,7 +331,7 @@ class BankingProvider extends ChangeNotifier {
       _notifications.insert(0, NotificationItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: 'Money Request Sent',
-        message: 'You requested \$${amount.toStringAsFixed(2)} from ${recipientName ?? recipientAccount}',
+        message: 'You requested Rs${amount.toStringAsFixed(2)} from ${recipientName ?? recipientAccount}',
         type: 'info',
         timestamp: DateTime.now(),
         isRead: false,

@@ -7,8 +7,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../providers/banking_provider.dart';
 import '../constants/app_colors.dart';
 import '../widgets/ui_components.dart';
-import '../widgets/data_table.dart';
-
 class CreditCardsScreen extends StatefulWidget {
   const CreditCardsScreen({super.key});
 
@@ -20,10 +18,7 @@ class _CreditCardsScreenState extends State<CreditCardsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
         title: const Text('Credit Cards'),
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft),
@@ -54,7 +49,7 @@ class _CreditCardsScreenState extends State<CreditCardsScreen> {
                     Expanded(
                       child: StatCard(
                         title: 'Total Balance',
-                        value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalCreditCardBalance),
+                        value: NumberFormat.currency(symbol: 'Rs').format(bankingProvider.totalCreditCardBalance),
                         icon: LucideIcons.creditCard,
                         iconColor: AppColors.primary,
                       ),
@@ -72,158 +67,75 @@ class _CreditCardsScreenState extends State<CreditCardsScreen> {
                 ),
               ),
 
-              // Credit Cards Table
+              // Credit Cards List
               Expanded(
-                child: Padding(
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
-                  child: TableCard(
-                    title: 'Credit Card Details',
-                    subtitle: '${creditCards.length} cards found',
-                    child: creditCards.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  LucideIcons.creditCard,
-                                  size: 64,
-                                  color: AppColors.mutedForeground.withOpacity(0.5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Credit Card Details',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No credit cards found',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: AppColors.mutedForeground,
-                                  ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${creditCards.length} cards found',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: AppColors.mutedForeground,
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Your credit cards will appear here',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.mutedForeground,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : DataTable(
-                            columns: const [
-                              DataColumn(label: Text('Card Number')),
-                              DataColumn(label: Text('Cardholder')),
-                              DataColumn(label: Text('Credit Limit')),
-                              DataColumn(label: Text('Available Credit')),
-                              DataColumn(label: Text('Current Balance')),
-                              DataColumn(label: Text('Utilization')),
-                              DataColumn(label: Text('Due Date')),
-                              DataColumn(label: Text('Status')),
+                              ),
                             ],
-                            rows: creditCards.map((card) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          card.type == 'visa' ? LucideIcons.creditCard : LucideIcons.creditCard,
-                                          size: 16,
-                                          color: AppColors.primary,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          card.cardNumber,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'monospace',
-                                          ),
-                                        ),
-                                      ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      creditCards.isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(48.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      LucideIcons.creditCard,
+                                      size: 64,
+                                      color: AppColors.mutedForeground.withOpacity(0.5),
                                     ),
-                                  ),
-                                  DataCell(
-                                    Text(card.cardHolderName),
-                                  ),
-                                  DataCell(
+                                    const SizedBox(height: 16),
                                     Text(
-                                      NumberFormat.currency(symbol: '\$').format(card.creditLimit),
-                                      style: const TextStyle(fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      NumberFormat.currency(symbol: '\$').format(card.availableCredit),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.success,
+                                      'No credit cards found',
+                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        color: AppColors.mutedForeground,
                                       ),
                                     ),
-                                  ),
-                                  DataCell(
+                                    const SizedBox(height: 8),
                                     Text(
-                                      NumberFormat.currency(symbol: '\$').format(card.currentBalance),
-                                      style: const TextStyle(fontWeight: FontWeight.w600),
+                                      'Your credit cards will appear here',
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: AppColors.mutedForeground,
+                                      ),
                                     ),
-                                  ),
-                                  DataCell(
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${card.utilizationPercentage.toStringAsFixed(1)}%',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: card.utilizationPercentage > 80
-                                                ? AppColors.destructive
-                                                : card.utilizationPercentage > 60
-                                                    ? AppColors.warning
-                                                    : AppColors.success,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        LinearProgressIndicator(
-                                          value: card.utilizationPercentage / 100,
-                                          backgroundColor: AppColors.muted,
-                                          valueColor: AlwaysStoppedAnimation<Color>(
-                                            card.utilizationPercentage > 80
-                                                ? AppColors.destructive
-                                                : card.utilizationPercentage > 60
-                                                    ? AppColors.warning
-                                                    : AppColors.success,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          DateFormat('MMM dd').format(card.dueDate),
-                                        ),
-                                        Text(
-                                          '${card.dueDate.difference(DateTime.now()).inDays} days',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: card.dueDate.difference(DateTime.now()).inDays <= 7
-                                                ? AppColors.destructive
-                                                : AppColors.mutedForeground,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  DataCell(
-                                    AppBadge(
-                                      variant: _getBadgeVariant(card.status),
-                                      child: Text(card.status.toUpperCase()),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Column(
+                              children: creditCards.asMap().entries.map((entry) {
+                                final card = entry.value;
+                                final isLast = entry.key == creditCards.length - 1;
+                                return _buildCreditCardCard(context, card, isLast);
+                              }).toList(),
+                            ),
+                    ],
                   ),
                 ),
               ),
@@ -245,5 +157,247 @@ class _CreditCardsScreenState extends State<CreditCardsScreen> {
       default:
         return BadgeVariant.default_;
     }
+  }
+
+  Widget _buildCreditCardCard(BuildContext context, dynamic card, bool isLast) {
+    Color getUtilizationColor() {
+      if (card.utilizationPercentage > 80) {
+        return AppColors.destructive;
+      } else if (card.utilizationPercentage > 60) {
+        return AppColors.warning;
+      }
+      return AppColors.success;
+    }
+
+    final daysUntilDue = card.dueDate.difference(DateTime.now()).inDays;
+
+    return AppCard(
+      margin: EdgeInsets.only(bottom: isLast ? 0 : 12),
+      padding: const EdgeInsets.all(16),
+      onTap: () {
+        // TODO: Navigate to card details
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  LucideIcons.creditCard,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            card.cardNumber,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'monospace',
+                            ),
+                          ),
+                        ),
+                        AppBadge(
+                          variant: _getBadgeVariant(card.status),
+                          size: BadgeSize.small,
+                          child: Text(
+                            card.status.toUpperCase(),
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      card.cardHolderName,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    Text(
+                      card.type.toUpperCase(),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground.withOpacity(0.7),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Credit Limit',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      NumberFormat.currency(symbol: 'Rs').format(card.creditLimit),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Available Credit',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      NumberFormat.currency(symbol: 'Rs').format(card.availableCredit),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: getUtilizationColor().withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Current Balance',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: getUtilizationColor().withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '${card.utilizationPercentage.toStringAsFixed(1)}% used',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: getUtilizationColor(),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  NumberFormat.currency(symbol: 'Rs').format(card.currentBalance),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.foreground,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: card.utilizationPercentage / 100,
+                    backgroundColor: AppColors.muted.withOpacity(0.3),
+                    valueColor: AlwaysStoppedAnimation<Color>(getUtilizationColor()),
+                    minHeight: 6,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Minimum Payment',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.mutedForeground,
+                            fontSize: 11,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          NumberFormat.currency(symbol: 'Rs').format(card.minimumPayment),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Due Date',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.mutedForeground,
+                            fontSize: 11,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          DateFormat('MMM dd').format(card.dueDate),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: daysUntilDue <= 7
+                                ? AppColors.destructive
+                                : AppColors.foreground,
+                          ),
+                        ),
+                        if (daysUntilDue <= 7 && daysUntilDue >= 0)
+                          Text(
+                            '$daysUntilDue days left',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.destructive,
+                              fontSize: 10,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -74,7 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             builder: (context, themeProvider, child) {
               return IconButton(
                 icon: Icon(
-                  themeProvider.isDarkMode ? LucideIcons.sun : LucideIcons.moon,
+                  themeProvider.isDarkMode(context) ? LucideIcons.sun : LucideIcons.moon,
                 ),
                 onPressed: () {
                   themeProvider.toggleTheme();
@@ -92,7 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           final user = authProvider.user!;
           final formattedBalance = NumberFormat.currency(
-            symbol: '\$',
+            symbol: 'Rs',
             decimalDigits: 2,
           ).format(user.balance);
 
@@ -193,7 +193,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context, bankingProvider, child) {
                           return StatCard(
                             title: 'Investments',
-                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalInvestmentValue),
+                            value: NumberFormat.currency(symbol: 'Rs').format(bankingProvider.totalInvestmentValue),
                             icon: LucideIcons.trendingUp,
                             iconColor: AppColors.success,
                             onTap: () => context.go('/investments'),
@@ -207,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context, bankingProvider, child) {
                           return StatCard(
                             title: 'Loans',
-                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalLoanBalance),
+                            value: NumberFormat.currency(symbol: 'Rs').format(bankingProvider.totalLoanBalance),
                             icon: LucideIcons.home,
                             iconColor: AppColors.warning,
                             onTap: () => context.go('/loans'),
@@ -225,7 +225,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context, bankingProvider, child) {
                           return StatCard(
                             title: 'Credit Cards',
-                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalCreditCardBalance),
+                            value: NumberFormat.currency(symbol: 'Rs').format(bankingProvider.totalCreditCardBalance),
                             icon: LucideIcons.creditCard,
                             iconColor: AppColors.info,
                             onTap: () => context.go('/credit-cards'),
@@ -239,7 +239,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context, bankingProvider, child) {
                           return StatCard(
                             title: 'Pending Bills',
-                            value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalBillsAmount),
+                            value: NumberFormat.currency(symbol: 'Rs').format(bankingProvider.totalBillsAmount),
                             icon: LucideIcons.fileText,
                             iconColor: AppColors.destructive,
                             onTap: () => context.go('/bills'),
@@ -766,7 +766,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '$amountPrefix\$${transaction.amount.abs().toStringAsFixed(2)}',
+                '${amountPrefix == '+' ? '+' : ''}Rs${transaction.amount.abs().toStringAsFixed(2)}',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: amountColor,
                   fontWeight: FontWeight.bold,
@@ -775,7 +775,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               if (transaction.fee != null && transaction.fee! > 0) ...[
                 const SizedBox(height: 2),
                 Text(
-                  'Fee: \$${transaction.fee!.toStringAsFixed(2)}',
+                  'Fee: Rs${transaction.fee!.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.mutedForeground,
                     fontSize: 10,
@@ -874,7 +874,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Deposited \$${amount.toStringAsFixed(2)} successfully!'),
+                              content: Text('Deposited Rs${amount.toStringAsFixed(2)} successfully!'),
                               backgroundColor: AppColors.success,
                             ),
                           );
@@ -955,7 +955,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            NumberFormat.currency(symbol: '\$').format(authProvider.user?.balance ?? 0),
+                            NumberFormat.currency(symbol: 'Rs').format(authProvider.user?.balance ?? 0),
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: AppColors.info,
@@ -1025,7 +1025,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Withdrew \$${amount.toStringAsFixed(2)} successfully!'),
+                              content: Text('Withdrew Rs${amount.toStringAsFixed(2)} successfully!'),
                               backgroundColor: AppColors.success,
                             ),
                           );
@@ -1146,7 +1146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Money request sent for \$${amount.toStringAsFixed(2)}!'),
+                          content: Text('Money request sent for Rs${amount.toStringAsFixed(2)}!'),
                           backgroundColor: AppColors.success,
                         ),
                       );

@@ -145,7 +145,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              NumberFormat.currency(symbol: '\$').format(totalSpent),
+                              NumberFormat.currency(symbol: 'Rs').format(totalSpent),
                               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 color: AppColors.primaryForeground,
                                 fontWeight: FontWeight.bold,
@@ -164,7 +164,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              NumberFormat.currency(symbol: '\$').format(totalBudget),
+                              NumberFormat.currency(symbol: 'Rs').format(totalBudget),
                               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 color: AppColors.primaryForeground,
                                 fontWeight: FontWeight.bold,
@@ -185,7 +185,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                           ),
                         ),
                         Text(
-                          NumberFormat.currency(symbol: '\$').format(remaining),
+                          NumberFormat.currency(symbol: 'Rs').format(remaining),
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: remaining >= 0
                                 ? AppColors.success
@@ -293,8 +293,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
                     const SizedBox(height: 4),
                     Text(
                       isOverBudget
-                          ? 'Over budget by \$${(-remaining).toStringAsFixed(0)}'
-                          : '\$${remaining.toStringAsFixed(0)} remaining',
+                          ? 'Over budget by Rs${(-remaining).toStringAsFixed(0)}'
+                          : 'Rs${remaining.toStringAsFixed(0)} remaining',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isOverBudget
                             ? AppColors.destructive
@@ -308,7 +308,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '\$${category.spent.toStringAsFixed(0)}',
+                    'Rs${category.spent.toStringAsFixed(0)}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isOverBudget
@@ -317,7 +317,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                     ),
                   ),
                   Text(
-                    'of \$${category.budget.toStringAsFixed(0)}',
+                    'of Rs${category.budget.toStringAsFixed(0)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.mutedForeground,
                     ),

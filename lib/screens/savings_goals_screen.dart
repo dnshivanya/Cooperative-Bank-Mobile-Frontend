@@ -95,7 +95,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          NumberFormat.currency(symbol: '\$').format(totalSaved),
+                          NumberFormat.currency(symbol: 'Rs').format(totalSaved),
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             color: AppColors.primaryForeground,
                             fontWeight: FontWeight.bold,
@@ -222,7 +222,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    NumberFormat.currency(symbol: '\$').format(goal.currentAmount),
+                    NumberFormat.currency(symbol: 'Rs').format(goal.currentAmount),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -240,7 +240,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    NumberFormat.currency(symbol: '\$').format(goal.targetAmount),
+                    NumberFormat.currency(symbol: 'Rs').format(goal.targetAmount),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -270,7 +270,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                 ),
               ),
               Text(
-                '\$${remaining.toStringAsFixed(0)} to go',
+                    'Rs${remaining.toStringAsFixed(0)} to go',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: goal.color,
                   fontWeight: FontWeight.w600,
@@ -319,7 +319,7 @@ class _SavingsGoalsScreenState extends State<SavingsGoalsScreen> {
                         ),
                       ),
                       Text(
-                        'Target: ${NumberFormat.currency(symbol: '\$').format(goal.targetAmount)}',
+                        'Target: ${NumberFormat.currency(symbol: 'Rs').format(goal.targetAmount)}',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.mutedForeground,
                         ),

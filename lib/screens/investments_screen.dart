@@ -7,8 +7,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../providers/banking_provider.dart';
 import '../constants/app_colors.dart';
 import '../widgets/ui_components.dart';
-import '../widgets/data_table.dart';
-
 class InvestmentsScreen extends StatefulWidget {
   const InvestmentsScreen({super.key});
 
@@ -24,10 +22,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
         title: const Text('Investments'),
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft),
@@ -59,7 +54,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                     Expanded(
                       child: StatCard(
                         title: 'Total Value',
-                        value: NumberFormat.currency(symbol: '\$').format(bankingProvider.totalInvestmentValue),
+                        value: NumberFormat.currency(symbol: 'Rs').format(bankingProvider.totalInvestmentValue),
                         icon: LucideIcons.trendingUp,
                         iconColor: AppColors.success,
                       ),
@@ -79,8 +74,8 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
 
               // Filter Section
               Container(
-                padding: const EdgeInsets.all(16),
-                color: AppColors.card,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -88,18 +83,25 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                       final isSelected = _selectedFilter == filter;
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
-                        child: FilterChip(
+                        child: ActionChip(
                           label: Text(filter),
-                          selected: isSelected,
-                          onSelected: (selected) {
+                          onPressed: () {
                             setState(() {
                               _selectedFilter = filter;
                             });
                           },
-                          selectedColor: AppColors.primary.withOpacity(0.2),
-                          checkmarkColor: AppColors.primary,
+                          backgroundColor: isSelected
+                              ? AppColors.primary
+                              : AppColors.card,
+                          side: BorderSide(
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.border,
+                          ),
                           labelStyle: TextStyle(
-                            color: isSelected ? AppColors.primary : AppColors.mutedForeground,
+                            color: isSelected
+                                ? AppColors.primaryForeground
+                                : AppColors.foreground,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),
@@ -109,15 +111,41 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                 ),
               ),
 
-              // Investments Table
+              // Investments List
               Expanded(
-                child: Padding(
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
-                  child: TableCard(
-                    title: 'Investment Portfolio',
-                    subtitle: '${filteredInvestments.length} investments found',
-                    child: filteredInvestments.isEmpty
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Investment Portfolio',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${filteredInvestments.length} investments found',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: AppColors.mutedForeground,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      filteredInvestments.isEmpty
                         ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(48.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -141,95 +169,17 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
                                   ),
                                 ),
                               ],
+                                ),
+                              ),
+                            )
+                          : Column(
+                              children: filteredInvestments.asMap().entries.map((entry) {
+                                final investment = entry.value;
+                                final isLast = entry.key == filteredInvestments.length - 1;
+                                return _buildInvestmentCard(context, investment, isLast);
+                              }).toList(),
                             ),
-                          )
-                        : DataTable(
-                            columns: const [
-                              DataColumn(label: Text('Symbol')),
-                              DataColumn(label: Text('Name')),
-                              DataColumn(label: Text('Shares')),
-                              DataColumn(label: Text('Current Price')),
-                              DataColumn(label: Text('Total Value')),
-                              DataColumn(label: Text('Gain/Loss')),
-                              DataColumn(label: Text('Status')),
-                            ],
-                            rows: filteredInvestments.map((investment) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(
-                                    Text(
-                                      investment.symbol,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'monospace',
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          investment.name,
-                                          style: const TextStyle(fontWeight: FontWeight.w600),
-                                        ),
-                                        Text(
-                                          investment.type.toUpperCase(),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.mutedForeground,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(investment.shares.toString()),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      NumberFormat.currency(symbol: '\$').format(investment.currentPrice),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      NumberFormat.currency(symbol: '\$').format(investment.totalValue),
-                                      style: const TextStyle(fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          NumberFormat.currency(symbol: investment.isGain ? '+' : '').format(investment.gainLoss),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: investment.isGain ? AppColors.success : AppColors.destructive,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${investment.gainLossPercentage.toStringAsFixed(2)}%',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: investment.isGain ? AppColors.success : AppColors.destructive,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  DataCell(
-                                    AppBadge(
-                                      variant: investment.isActive ? BadgeVariant.default_ : BadgeVariant.secondary,
-                                      child: Text(investment.status.toUpperCase()),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          ),
+                    ],
                   ),
                 ),
               ),
@@ -253,5 +203,220 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
       default:
         return investments;
     }
+  }
+
+  Widget _buildInvestmentCard(BuildContext context, dynamic investment, bool isLast) {
+    IconData getInvestmentIcon() {
+      switch (investment.type) {
+        case 'stocks':
+          return LucideIcons.trendingUp;
+        case 'mutual_funds':
+          return LucideIcons.pieChart;
+        case 'bonds':
+          return LucideIcons.fileText;
+        case 'etf':
+          return LucideIcons.barChart;
+        default:
+          return LucideIcons.activity;
+      }
+    }
+
+    Color getIconColor() {
+      if (investment.isGain) {
+        return AppColors.success;
+      } else if (investment.isLoss) {
+        return AppColors.destructive;
+      }
+      return AppColors.primary;
+    }
+
+    return AppCard(
+      margin: EdgeInsets.only(bottom: isLast ? 0 : 12),
+      padding: const EdgeInsets.all(16),
+      onTap: () {
+        // TODO: Navigate to investment details
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: getIconColor().withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  getInvestmentIcon(),
+                  size: 20,
+                  color: getIconColor(),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          investment.symbol,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        AppBadge(
+                          variant: investment.isActive ? BadgeVariant.default_ : BadgeVariant.secondary,
+                          size: BadgeSize.small,
+                          child: Text(
+                            investment.status.toUpperCase(),
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      investment.name,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      investment.type.toUpperCase().replaceAll('_', ' '),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground.withOpacity(0.7),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Shares',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      investment.shares.toStringAsFixed(2),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Current Price',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      NumberFormat.currency(symbol: 'Rs').format(investment.currentPrice),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Total Value',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      NumberFormat.currency(symbol: 'Rs').format(investment.totalValue),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: investment.isGain
+                  ? AppColors.success.withOpacity(0.1)
+                  : AppColors.destructive.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Gain/Loss',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      NumberFormat.currency(symbol: investment.isGain ? '+' : '').format(investment.gainLoss),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: investment.isGain ? AppColors.success : AppColors.destructive,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: investment.isGain
+                        ? AppColors.success.withOpacity(0.2)
+                        : AppColors.destructive.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '${investment.isGain ? '+' : ''}${investment.gainLossPercentage.toStringAsFixed(2)}%',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: investment.isGain ? AppColors.success : AppColors.destructive,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
